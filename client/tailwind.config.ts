@@ -8,7 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {},
+      backgroundImage: {
+        "hero-pattern": "url('/sparkles.jpg')",
+      },
       colors: {
         pink: "#F13AB1",
         red: "#E72744",
@@ -16,6 +18,7 @@ const config: Config = {
         flame: "#F05524",
         metal: "#29303E",
       },
+
       keyframes: {
         "translate-animation": {
           "0%": { transform: "translate(0, 0)" },
