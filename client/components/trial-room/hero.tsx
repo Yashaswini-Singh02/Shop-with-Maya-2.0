@@ -141,7 +141,7 @@ export const Hero: React.FC = () => {
       <span className="absolute w-full h-full transition-all duration-700 bg-orange/40 rounded-full blur-3xl"></span>
 
       <span className="absolute  w-full h-full  mt-56 bg-red/40 rounded-full blur-3xl"></span>
-      <span className="absolute w-full h-20 ml-72 mb-72 bg-pink/60 rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-20  bg-pink/60 rounded-full blur-3xl"></span>
       <div className="relative px-4 w-1/4 flex flex-col gap-4 pt-4 py-20 h-screen rounded-xl backdrop-filter backdrop-blur-xl bg-white/80">
         <h1 className="py-2 border border-pink rounded-md text-center font-medium bg-white backdrop-filter backdrop-blur-lg">
           STEP 1: UPLOAD YOUR PICTURE
@@ -189,12 +189,12 @@ export const Hero: React.FC = () => {
           STEP 2: DISCOVER YOUR FITS
         </h1>
         <div className="flex flex-col py-10 gap-y-8">
-          <div className="flex flex-col  justify-center items-center gap-y-2">
+          <div className="flex flex-col justify-center items-center gap-y-2">
             <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg bg-white/50 backdrop-filter backdrop-blur-lg">
               TOPS
             </h2>
 
-            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl bg-white/50 backdrop-filter backdrop-blur-lg">
+            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl h-96 overflow-y-scroll bg-white/50 backdrop-filter backdrop-blur-lg">
               {garmentImgTop.map((garment) => (
                 <div
                   key={garment.title}
@@ -204,7 +204,7 @@ export const Hero: React.FC = () => {
                     setGarmentZone(garment.garment_zone);
                   }}
                   className={`
-          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
+          cursor-pointer border rounded-lg flex flex-col justify-between bg-white
           ${
             selectedGarment === garment.image
               ? " border-blue-500 shadow-md"
