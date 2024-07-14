@@ -47,6 +47,7 @@ const config: Config = {
     },
     animation: {
       translate: "translate-animation 1.5s linear infinite",
+      spin: "spin 1s linear infinite",
     },
   },
   plugins: [],
