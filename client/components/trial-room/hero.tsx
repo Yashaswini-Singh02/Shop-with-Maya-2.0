@@ -1,52 +1,32 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import axios from "axios";
-import { ImageUpIcon, Loader2Icon, Trash2Icon } from "lucide-react";
+import { HeartIcon, ImageUpIcon, Loader2Icon, Trash2Icon } from "lucide-react";
+import { set } from "zod";
 
-interface imgProps {
+interface OutfitProps {
+  _id: string;
   image: string;
-  name: string;
+  title: string;
+  garment_zone: string;
 }
-const garmentImgBottom = [
-  {
-    image:
-      "https://ik.imagekit.io/w8i0qfppp/loose%20denim%20jeans.jpg?updatedAt=1720872465556",
-    name: "LOOSE DENIM JEANS",
-    garment_zone: "lower_body",
-  },
-  {
-    image:
-      "https://ik.imagekit.io/w8i0qfppp/Denim%20bootcut%20jeans.jpg?updatedAt=1720914348175",
-    name: "BOOTCUT DENIM JEANS",
-    garment_zone: "lower_body",
-  },
-];
-const garmentImgTop = [
-  {
-    image:
-      "https://ik.imagekit.io/w8i0qfppp/denim%20corset.jpg?updatedAt=1720872465556",
-    name: "DENIM CORSET",
-    garment_zone: "upper_body",
-  },
-
-  {
-    image:
-      "https://ik.imagekit.io/w8i0qfppp/V-shape%20blouse.jpg?updatedAt=1720914348198",
-    name: "V-SHAPE BLOUSE",
-    garment_zone: "upper_body",
-  },
-];
 
 export const Hero: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [userImage, setUserImage] = useState<string | null>(null);
   const [selectedGarment, setSelectedGarment] = useState<string | null>(null);
+  const [selectedGarmentId, setSelectedGarmentId] = useState<string | null>(
+    null
+  );
   const [garmentZone, setGarmentZone] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [garmentImgTop, setGarmentImgTop] = useState<OutfitProps[]>([]);
+  const [garmentImgBottom, setGarmentImgBottom] = useState<OutfitProps[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [likedOutfits, setLikedOutfits] = useState<string[]>([]);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement> | DragEvent
@@ -105,6 +85,57 @@ export const Hero: React.FC = () => {
     }
   };
 
+  const handleLikeOutfit = async (action: "like" | "unlike" = "like") => {
+    if (selectedGarmentId) {
+      let user = localStorage.getItem("user");
+      if (action === "like") {
+        await axios.put(
+          `http://localhost:8080/api/users/${user}/liked_outfits/${selectedGarmentId}`
+        );
+        setLikedOutfits([...likedOutfits, selectedGarmentId]);
+      } else {
+        await axios.delete(
+          `http://localhost:8080/api/users/${user}/liked_outfits/${selectedGarmentId}`
+        );
+        setLikedOutfits(
+          likedOutfits.filter((item) => item !== selectedGarmentId)
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/outfits/")
+      .then((res) => {
+        setGarmentImgTop(
+          res.data.filter(
+            (item: OutfitProps) => item.garment_zone === "upper_body"
+          )
+        );
+        setGarmentImgBottom(
+          res.data.filter(
+            (item: OutfitProps) => item.garment_zone === "lower_body"
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching outfits:", error);
+      });
+
+    let user = localStorage.getItem("user");
+    axios
+      .get(`http://localhost:8080/api/users/${user}`)
+      .then((res) => {
+        setLikedOutfits(
+          res.data.liked_outfits.map((item: OutfitProps) => item._id)
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  }, []);
+
   return (
     <section className="flex py-10 gap-x-8 px-10 bg-gradient-to-r">
       <span className="absolute w-full h-full transition-all duration-700 bg-orange/40 rounded-full blur-3xl"></span>
@@ -153,7 +184,100 @@ export const Hero: React.FC = () => {
           </button>
         )}
       </div>
-      <div className="relative h-screen w-1/3 rounded-xl flex flex-col justify-between items-start py-10 px-6 backdrop-filter backdrop-blur-xl bg-white/80">
+      <div className="relative w-full sm:w-1/3 px-4 py-4 backdrop-filter rounded-xl backdrop-blur-xl bg-white/80">
+        <h1 className="py-2 border border-pink rounded-md text-center font-medium bg-white/50 backdrop-filter backdrop-blur-lg">
+          STEP 2: DISCOVER YOUR FITS
+        </h1>
+        <div className="flex flex-col py-10 gap-y-8">
+          <div className="flex flex-col  justify-center items-center gap-y-2">
+            <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg bg-white/50 backdrop-filter backdrop-blur-lg">
+              TOPS
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl bg-white/50 backdrop-filter backdrop-blur-lg">
+              {garmentImgTop.map((garment) => (
+                <div
+                  key={garment.title}
+                  onClick={() => {
+                    setSelectedGarment(garment.image);
+                    setSelectedGarmentId(garment._id);
+                    setGarmentZone(garment.garment_zone);
+                  }}
+                  className={`
+          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
+          ${
+            selectedGarment === garment.image
+              ? " border-blue-500 shadow-md"
+              : " border-gray-300"
+          }
+        `}
+                >
+                  <div className="relative">
+                    <Image
+                      src={garment.image}
+                      alt={garment.title}
+                      layout="responsive"
+                      width={50}
+                      height={100}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm text-center font-medium">
+                      {garment.title}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-y-2">
+            <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg">
+              BOTTOMS
+            </h2>
+            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl ">
+              {garmentImgBottom.map((garment) => (
+                <div
+                  key={garment.title}
+                  onClick={() => {
+                    setSelectedGarment(garment.image);
+                    setSelectedGarmentId(garment._id);
+                    setGarmentZone(garment.garment_zone);
+                  }}
+                  className={`
+          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
+          ${
+            selectedGarment === garment.image
+              ? " border-blue-500 shadow-md"
+              : " border-gray-300"
+          }
+        `}
+                >
+                  <div className="relative">
+                    <Image
+                      src={garment.image}
+                      alt={garment.title}
+                      layout="responsive"
+                      width={50}
+                      height={100}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm text-center font-medium">
+                      {garment.title}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="relative h-screen w-1/3 rounded-xl flex flex-col items-start py-4 px-6 backdrop-filter backdrop-blur-xl bg-white/80 gap-4">
+        <h1 className="py-2 border border-pink rounded-md text-center font-medium bg-white/50 backdrop-filter backdrop-blur-lg w-full">
+          SEE HOW IT LOOKS
+        </h1>
         {loading && (
           <div className="bg-gray-200 bg-opacity-50 fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
             <div className="bg-white p-4 rounded-xl">
@@ -171,107 +295,33 @@ export const Hero: React.FC = () => {
             className="mx-auto rounded-xl"
           />
         )}
-
-        <button
-          className="py-2 border border-pink rounded-md text-center font-medium w-full bg-white/50 backdrop-filter backdrop-blur-lg"
-          onClick={() => {
-            if (resultImage) {
-              setResultImage(null);
-            } else {
-              handleTryOn();
-            }
-          }}
-          disabled={(!userImage || !selectedGarment) && !resultImage}
-        >
-          {resultImage ? "TRY SOMETHING ELSE" : "SEE HOW IT LOOKS"}
-        </button>
-      </div>
-      <div className="relative w-full sm:w-1/3 px-4 py-4 backdrop-filter rounded-xl backdrop-blur-xl bg-white/80">
-        <h1 className="py-2 border border-pink rounded-md text-center font-medium bg-white/50 backdrop-filter backdrop-blur-lg">
-          STEP 2: DISCOVER YOUR FITS
-        </h1>
-        <div className="flex flex-col py-10 gap-y-8">
-          <div className="flex flex-col  justify-center items-center gap-y-2">
-            <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg bg-white/50 backdrop-filter backdrop-blur-lg">
-              TOPS
-            </h2>
-
-            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl bg-white/50 backdrop-filter backdrop-blur-lg">
-              {garmentImgTop.map((garment) => (
-                <div
-                  key={garment.name}
-                  onClick={() => {
-                    setSelectedGarment(garment.image);
-                    setGarmentZone(garment.garment_zone);
-                  }}
-                  className={`
-          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
-          ${
-            selectedGarment === garment.image
-              ? " border-blue-500 shadow-md"
-              : " border-gray-300"
-          }
-        `}
-                >
-                  <div className="relative">
-                    <Image
-                      src={garment.image}
-                      alt={garment.name}
-                      layout="responsive"
-                      width={50}
-                      height={100}
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-center font-medium">
-                      {garment.name}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col justify-center items-center gap-y-2">
-            <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg">
-              BOTTOMS
-            </h2>
-            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl ">
-              {garmentImgBottom.map((garment) => (
-                <div
-                  key={garment.name}
-                  onClick={() => {
-                    setSelectedGarment(garment.image);
-                    setGarmentZone(garment.garment_zone);
-                  }}
-                  className={`
-          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
-          ${
-            selectedGarment === garment.image
-              ? " border-blue-500 shadow-md"
-              : " border-gray-300"
-          }
-        `}
-                >
-                  <div className="relative">
-                    <Image
-                      src={garment.image}
-                      alt={garment.name}
-                      layout="responsive"
-                      width={50}
-                      height={100}
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-center font-medium">
-                      {garment.name}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="flex justify-center w-full gap-x-4">
+          <button
+            className="py-2 border bg-pink text-white rounded-md text-center font-medium w-full backdrop-filter backdrop-blur-lg disabled:opacity-50"
+            onClick={() => {
+              if (resultImage) {
+                setResultImage(null);
+              } else {
+                handleTryOn();
+              }
+            }}
+            disabled={(!userImage || !selectedGarment) && !resultImage}
+          >
+            {resultImage ? "TRY SOMETHING ELSE" : "GENERATE OUTFIT"}
+          </button>
+          {resultImage && (
+            <button
+              className="py-2 border bg-white text-black border-pink rounded-md text-center font-medium w-full backdrop-filter backdrop-blur-lg flex justify-center items-center gap-x-2"
+              onClick={() => {
+                handleLikeOutfit(
+                  likedOutfits.includes(selectedGarmentId!) ? "unlike" : "like"
+                );
+              }}
+            >
+              <HeartIcon size={24} className="text-pink" />
+              {likedOutfits.includes(selectedGarmentId!) ? "UNLIKE" : "LIKE"}
+            </button>
+          )}
         </div>
       </div>
     </section>

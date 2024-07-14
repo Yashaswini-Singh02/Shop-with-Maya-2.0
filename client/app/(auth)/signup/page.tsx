@@ -4,11 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
-
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,19 +15,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SignupFormSchema } from "@/utils/types/schema/signup-schema";
+import axios from "axios";
 
 const SignupForm: React.FC = () => {
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof SignupFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
     console.log(values);
+    try {
+      const res = await axios.post("http://localhost:8080/api/users/", {
+        email: values.email,
+        password: values.password,
+      });
+
+      localStorage.setItem("user", res.data.email);
+      return res.data;
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -44,30 +53,7 @@ const SignupForm: React.FC = () => {
           <h1 className="text-2xl font-bold text-metal text-center leading-loose tracking-widest">
             SIGN UP
           </h1>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 text-metal mt-10"
-          >
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg font-medium tracking-wide">
-                    USERNAME
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="text-sm font-medium"
-                      placeholder="Maya Singh"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form className="space-y-8 text-metal mt-10">
             <FormField
               control={form.control}
               name="email"
@@ -104,7 +90,12 @@ const SignupForm: React.FC = () => {
             <div className="flex flex-col justify-center items-center text-center gap-y-4">
               <Button
                 className="text-center mt-6 px-10 py-4 w-80 text-xl font-bold bg-white/90 tracking-widest text-metal hover:bg-white/5 hover:text-white hover:shadow-lg"
-                type="submit"
+                type="button"
+                onClick={() => {
+                  onSubmit(
+                    form.getValues() as z.infer<typeof SignupFormSchema>
+                  );
+                }}
               >
                 SUBMIT
               </Button>

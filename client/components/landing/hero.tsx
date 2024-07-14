@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export const Hero: React.FC = () => {
   return (
@@ -21,9 +22,9 @@ export const Hero: React.FC = () => {
               <span className="absolute bottom-0 left-0 w-36 h-24 -ml-10 bg-red rounded-full blur-md"></span>
               <span className="absolute bottom-0 right-0 w-36 h-24 -mr-10 bg-orange rounded-full blur-md"></span>
             </span>
-            <span className="relative text-2xl text-white">
+            <Link href={"/login"} className="relative text-2xl text-white">
               Try our Virtual trial room
-            </span>
+            </Link>
           </button>
         </div>
         <div className="relative h-screen w-2/3 bg-orange">

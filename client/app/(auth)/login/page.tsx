@@ -17,19 +17,33 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoginFormSchema } from "@/utils/types/schema/login-schema";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const LoginForm: React.FC = () => {
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      username: "",
+      email: "",
 
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginFormSchema>) => {
-    console.log(values);
+  const { push } = useRouter();
+
+  const onSubmit = async (values: z.infer<typeof LoginFormSchema>) => {
+    try {
+      const res = await axios.post("http://localhost:8080/api/users/login", {
+        email: values.email,
+        password: values.password,
+      });
+
+      localStorage.setItem("user", res.data.email);
+      push("/profile");
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -50,16 +64,16 @@ const LoginForm: React.FC = () => {
           >
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg font-medium tracking-wide">
-                    USERNAME
+                    EMAIL
                   </FormLabel>
                   <FormControl>
                     <Input
                       className="text-sm font-medium"
-                      placeholder="Maya Singh"
+                      placeholder="mayasingh@gmail.com"
                       {...field}
                     />
                   </FormControl>
