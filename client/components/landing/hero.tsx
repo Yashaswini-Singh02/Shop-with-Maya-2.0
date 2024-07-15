@@ -6,7 +6,7 @@ export const Hero: React.FC = () => {
     <section className="">
       <div className="flex">
         <div className="bg-white flex flex-col justify-center items-center h-full text-center w-full gap-y-10 py-32 px-20">
-          <div className="bg-hero-pattern bg-cover absolute rounded-full h-20 w-20 top-72 left-36"></div>
+          <div className="bg-hero-pattern bg-cover absolute rounded-full h-20 w-16 top-60 left-36"></div>
           <h1 className="text-5xl font-bold font-playfair-display">
             Revolutionizing Your Online Fashion Experience
           </h1>

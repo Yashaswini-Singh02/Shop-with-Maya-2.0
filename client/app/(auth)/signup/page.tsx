@@ -43,17 +43,19 @@ const SignupForm: React.FC = () => {
 
   return (
     <section className="relative h-screen flex flex-col justify-center items-center">
-      <span className="absolute w-96 h-96 mb-80 mr-80 transition-all duration-700 bg-orange rounded-full blur-3xl ease"></span>
-
-      <span className="absolute  w-96 h-96  mt-60 bg-red rounded-full blur-3xl"></span>
-      <span className="absolute w-96 h-96 ml-72 mb-80 bg-pink rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-full transition-all duration-700 bg-orange/40 rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-full mt-56 bg-red/40 rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-20 ml-72 mb-72 bg-pink/60 rounded-full blur-3xl"></span>
 
       <Form {...form}>
-        <div className="relative w-1/3 px-2">
+        <div className="relative w-1/3 px-10 py-10 backdrop-filter rounded-xl backdrop-blur-xl bg-white/80">
           <h1 className="text-2xl font-bold text-metal text-center leading-loose tracking-widest">
             SIGN UP
           </h1>
-          <form className="space-y-8 text-metal mt-10">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className=" text-metal space-y-2"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -64,15 +66,17 @@ const SignupForm: React.FC = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder="Enter your email"
+                      className="text-sm font-medium"
+                      placeholder="mayasingh@gmail.com"
                       {...field}
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
@@ -87,24 +91,22 @@ const SignupForm: React.FC = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-col justify-center items-center text-center gap-y-4">
-              <Button
-                className="text-center mt-6 px-10 py-4 w-80 text-xl font-bold bg-white/90 tracking-widest text-metal hover:bg-white/5 hover:text-white hover:shadow-lg"
-                type="button"
-                onClick={() => {
-                  onSubmit(
-                    form.getValues() as z.infer<typeof SignupFormSchema>
-                  );
-                }}
-              >
-                SUBMIT
-              </Button>
+            <div className="flex flex-col justify-center items-center text-center gap-y-2">
+              <a href="/tryon">
+                <Button
+                  className="text-center mt-10 px-10 py-4 w-80 text-lg font-bold  bg-white border-pink border tracking-widest text-metal "
+                  type="submit"
+                >
+                  SUBMIT
+                </Button>
+              </a>
               <p className="text-md font-medium tracking-wide">
                 Already have an account?{" "}
                 <Link href={"/login"}>
                   <span className="underline underline-offset-2">Log In</span>
                 </Link>
               </p>
+              ;
             </div>
           </form>
         </div>

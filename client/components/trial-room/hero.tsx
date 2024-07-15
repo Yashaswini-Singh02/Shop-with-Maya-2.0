@@ -235,7 +235,7 @@ export const Hero: React.FC = () => {
             <h2 className="font-medium tracking-wide border w-max px-10 py-1 border-violet-500 rounded-lg">
               BOTTOMS
             </h2>
-            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl ">
+            <div className="grid grid-cols-2 gap-4 py-4 px-8 rounded-xl h-96 overflow-y-scroll bg-white ">
               {garmentImgBottom.map((garment) => (
                 <div
                   key={garment.title}
@@ -245,7 +245,7 @@ export const Hero: React.FC = () => {
                     setGarmentZone(garment.garment_zone);
                   }}
                   className={`
-          cursor-pointer border rounded-lg flex flex-col justify-between overflow-hidden bg-white
+          cursor-pointer border rounded-lg flex flex-col justify-between  bg-white
           ${
             selectedGarment === garment.image
               ? " border-blue-500 shadow-md"

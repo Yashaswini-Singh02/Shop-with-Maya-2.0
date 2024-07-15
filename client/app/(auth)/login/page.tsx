@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
       });
 
       localStorage.setItem("user", res.data.email);
-      push("/profile");
+      push("/tryon");
     } catch (error: any) {
       alert(error.message);
     }
@@ -48,19 +48,18 @@ const LoginForm: React.FC = () => {
 
   return (
     <section className="relative h-screen flex flex-col justify-center items-center">
-      <span className="absolute w-80 h-80 mb-72 mr-80 transition-all duration-700 bg-orange rounded-full blur-3xl ease"></span>
-
-      <span className="absolute  w-80 h-80  mt-56 bg-red rounded-full blur-3xl"></span>
-      <span className="absolute w-80 h-80 ml-72 mb-72 bg-pink rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-full transition-all duration-700 bg-orange/40 rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-full mt-56 bg-red/40 rounded-full blur-3xl"></span>
+      <span className="absolute w-full h-20 ml-72 mb-72 bg-pink/60 rounded-full blur-3xl"></span>
 
       <Form {...form}>
-        <div className="relative w-1/3 px-2">
+        <div className="relative w-1/3 px-10 py-10 backdrop-filter rounded-xl backdrop-blur-xl bg-white/80">
           <h1 className="text-2xl font-bold text-metal text-center leading-loose tracking-widest">
             LOG IN
           </h1>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 text-metal mt-10"
+            className=" text-metal space-y-2"
           >
             <FormField
               control={form.control}
@@ -97,9 +96,9 @@ const LoginForm: React.FC = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-col justify-center items-center text-center gap-y-4">
+            <div className="flex flex-col justify-center items-center text-center gap-y-2">
               <Button
-                className="text-center mt-6 px-10 py-4 w-80 text-xl font-bold bg-white/90 tracking-widest text-metal hover:bg-white/5 hover:text-white hover:shadow-lg"
+                className="text-center mt-10 px-10 py-4 w-80 text-lg font-bold  bg-white border-pink border tracking-widest text-metal "
                 type="submit"
               >
                 SUBMIT
