@@ -5,6 +5,7 @@ import Image from "next/image";
 import axios from "axios";
 import { HeartIcon, ImageUpIcon, Loader2Icon, Trash2Icon } from "lucide-react";
 import { set } from "zod";
+import toast from "react-hot-toast";
 
 interface OutfitProps {
   _id: string;
@@ -93,6 +94,7 @@ export const Hero: React.FC = () => {
           `http://localhost:8080/api/users/${user}/liked_outfits/${selectedGarmentId}`
         );
         setLikedOutfits([...likedOutfits, selectedGarmentId]);
+        toast.success("Outfit liked!");
       } else {
         await axios.delete(
           `http://localhost:8080/api/users/${user}/liked_outfits/${selectedGarmentId}`
@@ -100,6 +102,7 @@ export const Hero: React.FC = () => {
         setLikedOutfits(
           likedOutfits.filter((item) => item !== selectedGarmentId)
         );
+        toast.success("Outfit unliked!");
       }
     }
   };
