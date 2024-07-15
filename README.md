@@ -14,4 +14,4 @@ In the future, users will be able to share their "Trend Book" on social media , 
 Our model can be integrated with the already existing Myntra Stylist-MAYA. 
 # Future Prospects-
 In the future prospects of this project, we intend to make the "trend book" share-able on various social media platform so that others can take inspiration from a set of "trends".
-
+We also intend to include bilingual support for customers who are not so much comfortable with only one language in use. 
